@@ -12,7 +12,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func main() {
+/*func main() {
 	//Connect to the database
 	db, err := sql.Open("sqlite", "./rail.db")
 
@@ -21,7 +21,7 @@ func main() {
 	}
 	//Create Tables
 	dbutils.Initialize(db)
-}
+}*/
 
 // Database driver visible to the whole program
 var DB *sql.DB
@@ -110,4 +110,21 @@ func (t TrainResource) removeTrain(request *restful.Request, response *restful.R
 	} else {
 		response.WriteHeader(http.StatusOK)
 	}
+}
+
+func main() {
+	var err error
+	DB, err = sql.Open("sqlite,", "./railapi.db")
+	if err != nil {
+		log.Println("Driver creation failed!")
+	}
+
+	dbutils.Initialize(DB)
+	wsContainer := restful.NewContainer()
+	wsContainer.Router(restful.CurlyRouter{})
+	t := TrainResource{}
+	t.Register(wsContainer)
+	log.Printf("start listeninig on localhost:8000")
+	server := &http.Server{Addr: ":8000", Handler: wsContainer}
+	log.Fatal(server.ListenAndServe())
 }
