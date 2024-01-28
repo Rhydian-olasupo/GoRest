@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 // Book is a placeholder for book
@@ -39,7 +39,7 @@ func dbOperations(db *sql.DB) {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "./books.db")
+	db, err := sql.Open("sqlite", "./books.db")
 	if err != nil {
 		log.Println(err)
 	}
