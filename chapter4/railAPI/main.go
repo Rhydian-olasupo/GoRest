@@ -35,10 +35,10 @@ type TrainResource struct {
 }
 
 type StationResource struct {
-	ID            int
-	Name          string
-	OpeniningTime time.Time
-	ClosingTime   time.Time
+	ID          int
+	Name        string
+	OpeningTime time.Time
+	ClosingTime time.Time
 }
 
 type ScheduleResource struct {
@@ -61,11 +61,94 @@ func (t *TrainResource) Register(container *restful.Container) {
 
 }
 
+func (s *StationResource) Register(container *restful.Container) {
+	ws := new(restful.WebService)
+	ws.Path("/v1/stations").Consumes(restful.MIME_JSON).Produces(restful.MIME_JSON)
+	ws.Route(ws.GET("/{station-name}").To(s.getStation))
+	ws.Route(ws.POST("").To(s.createStation))
+	ws.Route(ws.DELETE("/{station-name}").To(s.removeStation))
+	container.Add(ws)
+}
+
+//GET http://localhost:8000/v1/stations/ibadan
+
+func (s *StationResource) getStation(request *restful.Request, response *restful.Response) {
+	name := request.PathParameter("station-name")
+	err := DB.QueryRow("select ID,NAME,OPENING_TIME,CLOSING_TIME FROM station where name =?", name).Scan(&s.ID, &s.Name, &s.OpeningTime, &s.ClosingTime)
+	if err != nil {
+		log.Println(err)
+		response.AddHeader("Content-Type", "text/plain")
+		response.WriteErrorString(http.StatusNotFound, "Station could not be found")
+	} else {
+		response.WriteEntity(s)
+	}
+}
+
+//POST hhtp://localhost:8000/v1/stations
+
+func (s StationResource) createStation(request *restful.Request, response *restful.Response) {
+	decoder := json.NewDecoder(request.Request.Body)
+	var z StationResource
+	err := decoder.Decode(&z)
+	if err != nil {
+		log.Println("Error decoding payload:", err)
+		response.AddHeader("Content-Type", "text/plain")
+		response.WriteErrorString(http.StatusBadRequest, "Invalid payload")
+		return
+	}
+
+	// No need to parse time again, it's already a time.Time value
+	// Use z.OpeningTime and z.ClosingTime directly
+
+	statement, err := DB.Prepare("insert into station (NAME, OPENING_TIME, CLOSING_TIME) values (?, ?, ?)")
+	if err != nil {
+		log.Println("Error preparing statement:", err)
+		response.AddHeader("Content-Type", "text/plain")
+		response.WriteErrorString(http.StatusInternalServerError, "Database error")
+		return
+	}
+
+	defer statement.Close()
+
+	result, err := statement.Exec(z.Name, z.OpeningTime, z.ClosingTime)
+	if err != nil {
+		log.Println("Error executing statement:", err)
+		response.AddHeader("Content-Type", "text/plain")
+		response.WriteErrorString(http.StatusInternalServerError, "Database error")
+		return
+	}
+
+	newID, err := result.LastInsertId()
+	if err != nil {
+		log.Println("Error getting last insert ID:", err)
+		response.AddHeader("Content-Type", "text/plain")
+		response.WriteErrorString(http.StatusInternalServerError, "Database error")
+		return
+	}
+
+	z.ID = int(newID)
+	response.WriteHeaderAndEntity(http.StatusCreated, z)
+}
+
+//DELETE http://localhost:8000/v1/stations/ibadan
+
+func (s StationResource) removeStation(request *restful.Request, response *restful.Response) {
+	name := request.PathParameter("station-name")
+	statement, _ := DB.Prepare("delete from station where name =?")
+	_, err := statement.Exec(name)
+	if err != nil {
+		response.AddHeader("Content-Type", "text/plain")
+		response.WriteErrorString(http.StatusInternalServerError, err.Error())
+	} else {
+		response.WriteHeader(http.StatusOK)
+	}
+}
+
 // Get http://localhost:8000/v1/trains/1
 func (t *TrainResource) getTrain(request *restful.Request,
 	response *restful.Response) {
 	id := request.PathParameter("train-id")
-	err := DB.QueryRow("select ID, DRIVER_NAME. OPERATING_STATUS FROM train where id =?", id).Scan(&t.ID, &t.DriverName, &t.OperatingStatus)
+	err := DB.QueryRow("select ID, DRIVER_NAME,OPERATING_STATUS FROM train where id =?", id).Scan(&t.ID, &t.DriverName, &t.OperatingStatus)
 	if err != nil {
 		log.Println(err)
 		response.AddHeader("Content-Type", "text/plain")
@@ -114,7 +197,7 @@ func (t TrainResource) removeTrain(request *restful.Request, response *restful.R
 
 func main() {
 	var err error
-	DB, err = sql.Open("sqlite,", "./railapi.db")
+	DB, err = sql.Open("sqlite", "./railapi.db")
 	if err != nil {
 		log.Println("Driver creation failed!")
 	}
@@ -123,6 +206,8 @@ func main() {
 	wsContainer := restful.NewContainer()
 	wsContainer.Router(restful.CurlyRouter{})
 	t := TrainResource{}
+	s := StationResource{}
+	s.Register(wsContainer)
 	t.Register(wsContainer)
 	log.Printf("start listeninig on localhost:8000")
 	server := &http.Server{Addr: ":8000", Handler: wsContainer}
