@@ -41,22 +41,34 @@ func GetStation(c *gin.Context) {
 func CreateStation(c *gin.Context) {
 	var station StationResource
 
-	if err := c.BindJSON(&station); err == nil {
-		statement, _ := DB.Prepare("insert into station (NAME,OPENING_TIME,CLOSING_TIME) values (?,?,?)")
-		result, _ := statement.Exec(station.Name, station.OpeningTime, station.ClosingTime)
-		if err == nil {
-			newID, _ := result.LastInsertId()
-			station.ID = int(newID)
-			c.JSON(http.StatusOK, gin.H{
-				"result": station,
-			})
-		} else {
-			c.String(http.StatusInternalServerError, err.Error())
-		}
-	} else {
-		c.String(http.StatusInternalServerError, err.Error())
+	if err := c.BindJSON(&station); err != nil {
+		c.String(http.StatusBadRequest, "Invalid JSON payload")
+		return
 	}
 
+	statement, err := DB.Prepare("INSERT INTO station (NAME, OPENING_TIME, CLOSING_TIME) VALUES (?, ?, ?)")
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Error preparing SQL statement")
+		return
+	}
+	defer statement.Close()
+
+	result, err := statement.Exec(station.Name, station.OpeningTime, station.ClosingTime)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Error executing SQL statement")
+		return
+	}
+
+	newID, err := result.LastInsertId()
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Error getting last insert ID")
+		return
+	}
+
+	station.ID = int(newID)
+	c.JSON(http.StatusOK, gin.H{
+		"result": station,
+	})
 }
 
 func RemoveStation(c *gin.Context) {
