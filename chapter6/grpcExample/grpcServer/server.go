@@ -19,6 +19,7 @@ type server struct {
 // MakeTransaction implements MoneyTransactionServer.MakeTransaction
 func (s *server) MakeTransaction(ctx context.Context, in *pb.TranscationRequest) (*pb.TranscationResponse, error) {
 	//Use in.Amount , in.From, in.To to perform transaction logic
+	log.Printf("Amount: %f, From A/c: %s, To A/c: %s", in.Amount, in.From, in.To)
 	return &pb.TranscationResponse{Confirmation: true}, nil
 }
 

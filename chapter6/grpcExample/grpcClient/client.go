@@ -37,6 +37,6 @@ func main() {
 		log.Fatalf("Failed to make transaction: %v", err)
 	}
 
-	log.Printf("Transaction successful. Response: %v", r)
+	log.Printf("Transaction confirmed:%v", r)
 
 }
