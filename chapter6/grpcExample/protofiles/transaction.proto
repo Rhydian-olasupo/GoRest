@@ -1,0 +1,17 @@
+syntax = "proto3";
+option go_package = "/protofiles";
+
+
+message TranscationRequest {
+    string from = 1;
+    string to = 2;
+    float amount = 3;
+}
+
+message TranscationResponse {
+    bool confirmation =1;
+}
+
+service MoneyTransaction {
+    rpc MakeTransaction(TranscationRequest) returns (TranscationResponse) {}
+}
