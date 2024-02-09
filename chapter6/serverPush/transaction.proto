@@ -1,5 +1,5 @@
 syntax = "proto3";
-options go_pacakge = "/protofiles";
+option go_package = "/protofiles";
 
 
 message TransactionRequest {
@@ -15,5 +15,5 @@ message TransactionResponse {
 }
 
 service MoneyTransaction {
-    rpc MakeTransaction(TransactionRequest) returns (streams TransactionResponse) {}
+    rpc MakeTransaction(TransactionRequest) returns (stream TransactionResponse) {}
 }
