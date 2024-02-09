@@ -4,7 +4,11 @@ import (
 	"fmt"
 	pb "go_trial/gorest/chapter6/serverPush/protofiles"
 	"log"
+	"net"
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type server struct {
@@ -32,5 +36,19 @@ func (s *server) MakeTransaction(in *pb.TransactionRequest, stream pb.MoneyTrans
 	log.Printf("Successfully transferred amount $%v from %v to %v", in.Amount, in.From, in.To)
 	log.Printf("Thank you for Using Our Service")
 	return nil
+
+}
+
+func main() {
+	lis, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Println("Could not connect to server")
+	}
+	s := grpc.NewServer()
+	pb.RegisterMoneyTransactionServer(s, &server{})
+	reflection.Register(s)
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
 
 }
