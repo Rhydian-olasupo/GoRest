@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	host     = "127.0.0.2"
+	host     = "127.0.0.1"
 	port     = 5432
-	user     = "rhydian"
-	password = "rhydianpostgres"
+	user     = "postgres"
+	password = "mofito"
 	dbname   = "mydb"
 )
 
