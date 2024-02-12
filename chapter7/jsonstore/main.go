@@ -41,7 +41,7 @@ func main() {
 	r.HandleFunc("/v1/package", dbclient.GetPackagesbyWeight).Methods("GET")
 	srv := &http.Server{
 		Handler: r,
-		Addr:    "127.0.0.1:8000",
+		Addr:    "127.0.0.1:5432",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

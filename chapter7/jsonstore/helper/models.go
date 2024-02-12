@@ -8,13 +8,14 @@ import (
 
 type Shipment struct {
 	gorm.Model
-	Packages []Package
-	Data     string `sql:"type:JSONB NOT NULL DEFAULT '{}'::JSONB" json:"-"`
+	Packages []Package `gorm:"foreignKey:ShipmentID"` // Define the one-to-many relationship
+	Data     string    `sql:"type:JSONB NOT NULL DEFAULT '{}'::JSONB" json:"-"`
 }
 
 type Package struct {
 	gorm.Model
-	Data string `sql:"type:JSONB NOT NULL DEFAULT '{}'::JSONB"`
+	ShipmentID uint   // Foreign key for the Shipment
+	Data       string `sql:"type:JSONB NOT NULL DEFAULT '{}'::JSONB"`
 }
 
 //GORM creates tables with plural names
