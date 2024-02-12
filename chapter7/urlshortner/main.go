@@ -50,8 +50,8 @@ func (driver *DBClient) GenerateShortURL(w http.ResponseWriter, r *http.Request)
 	var id int
 	var record Record
 	postBody, _ := io.ReadAll(r.Body)
-	err := json.Unmarshal(postBody, &record)
-	err = driver.db.QueryRow("INSERT INTO web_url(url) VALUES($1) RETURNING id", record.URL).Scan(&id)
+	json.Unmarshal(postBody, &record)
+	err := driver.db.QueryRow("INSERT INTO web_url(url) VALUES($1) RETURNING id", record.URL).Scan(&id)
 	responseMap := map[string]string{"encoded_string": base62.ToBase62(id)}
 
 	if err != nil {
