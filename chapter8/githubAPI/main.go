@@ -7,8 +7,10 @@ import (
 	"github.com/levigross/grequests"
 )
 
-var githubtoken = os.Getenv("GITHUB_TOKEN")
-var requestOptions = &grequests.RequestOptions{Auth: []string{githubtoken, "x-oauth-basic"}}
+var (
+	githubtoken    = os.Getenv("GITHUB_TOKEN")
+	requestOptions = &grequests.RequestOptions{Auth: []string{githubtoken, "x-oauth-basic"}}
+)
 
 type Repo struct {
 	ID       int    `json:"id"`
