@@ -80,8 +80,8 @@ func main() {
 			Action: func(ctx *cli.Context) error {
 				if ctx.NArg() > 0 {
 					//Github API Logic
-					var repos Repo
-					user := ctx.Args().Get(0)
+					var repos []Repo
+					user := ctx.Args().First()
 					var repoUrl = fmt.Sprintf("https://api.github.com/users/%s/repos", user)
 					resp := getStats(repoUrl)
 					resp.JSON(&repos)
