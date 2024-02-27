@@ -94,7 +94,7 @@ func createCmd(cmd *cobra.Command, args []string) {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:     "github API tool",
+		Use:     "githubAPItool",
 		Version: "1.0",
 	}
 	fetchCmd := &cobra.Command{
@@ -107,10 +107,12 @@ func main() {
 	}
 
 	createCmd := &cobra.Command{
-		Use:   "Create [name] [description] [files....]",
-		Short: "Create github gists from given files/Texts",
-		Args:  cobra.ExactArgs(2),
-		Run:   createCmd,
+		Use:     "Create [name] [description] [files....]",
+		Aliases: []string{"C", "c"},
+		Short:   "Create github gists from given files/Texts",
+		Example: "main.exe Create/ C/ c [file title] [file / file directiory ]",
+		Args:    cobra.ExactArgs(2),
+		Run:     createCmd,
 	}
 
 	rootCmd.AddCommand(fetchCmd, createCmd)
