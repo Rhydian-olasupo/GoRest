@@ -110,7 +110,7 @@ func main() {
 		Use:     "Create [name] [description] [files....]",
 		Aliases: []string{"C", "c"},
 		Short:   "Create github gists from given files/Texts",
-		Example: "main.exe Create/ C/ c [file title] [file / file directiory ]",
+		Example: "main.exe Create 'This is a gist' sample1.txt ",
 		Args:    cobra.ExactArgs(2),
 		Run:     createCmd,
 	}
