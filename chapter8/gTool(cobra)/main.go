@@ -98,10 +98,12 @@ func main() {
 		Version: "1.0",
 	}
 	fetchCmd := &cobra.Command{
-		Use:   "fetch [user]",
-		Short: "Fetch the repo details belonging to this user",
-		Args:  cobra.ExactArgs(1),
-		Run:   fetchCmd,
+		Use:     "fetch [user]",
+		Aliases: []string{"f"},
+		Short:   "Fetch the repo details belonging to this user",
+		Example: "main.exe Fetch/f torvalds",
+		Args:    cobra.ExactArgs(1),
+		Run:     fetchCmd,
 	}
 
 	createCmd := &cobra.Command{
