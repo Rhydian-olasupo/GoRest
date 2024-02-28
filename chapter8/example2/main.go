@@ -24,7 +24,7 @@ func main() {
 		var args []string
 		if ctx.NArg() > 0 {
 			//Fetch arguments in an array
-			args = ctx.Args()
+			args := ctx.Args().Get(0)
 			personName := args[0]
 			marks := args[1:len(args)]
 			log.Println("Person: ", personName)
