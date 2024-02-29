@@ -19,6 +19,7 @@ type JobServer struct {
 	Conn    *amqp.Connection
 }
 
+// nolint:U1000
 func (s *JobServer) publish(jsonBody []byte) error {
 	message := amqp.Publishing{
 		ContentType: "application/json",
@@ -56,4 +57,42 @@ func (s *JobServer) asyncDBHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
+}
+
+func (s *JobServer) asyncCallbackHandler(w http.ResponseWriter, r *http.Request) {
+	jobID, err := uuid.NewRandom()
+
+	jsonBody, err := json.Marshal(models.Job{ID: jobID,
+		Type:      "B",
+		ExtraData: "",
+	})
+	handleError(err, "JSON body creation failed")
+
+	if s.publish(jsonBody) == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonBody)
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func (s *JobServer) asyncMailHandler(w http.ResponseWriter, r *http.Request) {
+	jobID, err := uuid.NewRandom()
+
+	jsonBody, err := json.Marshal(models.Job{ID: jobID,
+		Type:      "C",
+		ExtraData: "",
+	})
+	handleError(err, "JSON body creation failed")
+
+	err = s.publish(jsonBody)
+
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonBody)
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
