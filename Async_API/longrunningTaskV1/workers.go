@@ -10,7 +10,7 @@ import (
 )
 
 type Workers struct {
-	conn amqp.Connection
+	conn *amqp.Connection
 }
 
 func (w *Workers) dbWork(job models.Job) {

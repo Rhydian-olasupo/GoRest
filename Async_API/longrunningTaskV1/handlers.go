@@ -19,7 +19,6 @@ type JobServer struct {
 	Conn    *amqp.Connection
 }
 
-// nolint:U1000
 func (s *JobServer) publish(jsonBody []byte) error {
 	message := amqp.Publishing{
 		ContentType: "application/json",
@@ -39,6 +38,7 @@ func (s *JobServer) publish(jsonBody []byte) error {
 
 func (s *JobServer) asyncDBHandler(w http.ResponseWriter, r *http.Request) {
 	jobID, err := uuid.NewRandom()
+	handleError(err, "Error generating job ID")
 	queryParams := r.URL.Query()
 	//Example client_time: 1569174071
 	unixTime, err := strconv.ParseInt(queryParams.Get("client_time"), 10, 64)
@@ -61,6 +61,7 @@ func (s *JobServer) asyncDBHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *JobServer) asyncCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	jobID, err := uuid.NewRandom()
+	handleError(err, "Error generating job ID")
 
 	jsonBody, err := json.Marshal(models.Job{ID: jobID,
 		Type:      "B",
@@ -79,6 +80,7 @@ func (s *JobServer) asyncCallbackHandler(w http.ResponseWriter, r *http.Request)
 
 func (s *JobServer) asyncMailHandler(w http.ResponseWriter, r *http.Request) {
 	jobID, err := uuid.NewRandom()
+	handleError(err, "Error generating job ID")
 
 	jsonBody, err := json.Marshal(models.Job{ID: jobID,
 		Type:      "C",
