@@ -3,7 +3,7 @@ package main
 import "log"
 
 const (
-	queueName  string = "JobQueue"
+	queueName  string = "jobQueue"
 	hostString string = "127.0.0.1:8000"
 )
 
