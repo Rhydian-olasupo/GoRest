@@ -13,6 +13,26 @@ type Workers struct {
 	conn amqp.Connection
 }
 
+func (w *Workers) dbWork(job models.Job) {
+	result := job.ExtraData.(map[string]interface{})
+	log.Printf("Workers %s: extracting data....., JOB: %s", job.Type, result)
+	time.Sleep(2 * time.Second)
+	log.Printf("Workesrs %s: saving data to database...., JOB: %s", job.Type, job.ID)
+}
+
+func (w *Workers) callbackWork(job models.Job) {
+	log.Printf("Worker %s: performing some long running process..., JOB: %s", job.Type, job.ID)
+	time.Sleep(10 * time.Second)
+	log.Printf("Worker %s: posting the data back to the given callback..., JOB: %s", job.Type, job.ID)
+}
+
+func (w *Workers) emailWork(job models.Job) {
+	log.Printf("Worker %s: sending the email..., JOB: %s",
+		job.Type, job.ID)
+	time.Sleep(2 * time.Second)
+	log.Printf("Worker %s: sent the email successfully, JOB: %s", job.Type, job.ID)
+}
+
 func (w *Workers) run() {
 	log.Printf("Workers are booted up and running")
 	channel, err := w.conn.Channel()
@@ -62,24 +82,4 @@ func (w *Workers) run() {
 	defer w.conn.Close()
 	wait := make(chan bool)
 	<-wait //. Run long-running worker.
-}
-
-func (w *Workers) dbWork(job models.Job) {
-	result := job.ExtraData.(map[string]interface{})
-	log.Printf("Workers %s: extracting data....., JOB: %s", job.Type, result)
-	time.Sleep(2 * time.Second)
-	log.Printf("Workesrs %s: saving data to database...., JOB: %s", job.Type, job.ID)
-}
-
-func (w *Workers) callbackWork(job models.Job) {
-	log.Printf("Worker %s: performing some long running process..., JOB: %s", job.Type, job.ID)
-	time.Sleep(10 * time.Second)
-	log.Printf("Worker %s: posting the data back to the given callback..., JOB: %s", job.Type, job.ID)
-}
-
-func (w *Workers) emailWork(job models.Job) {
-	log.Printf("Worker %s: sending the email..., JOB: %s",
-		job.Type, job.ID)
-	time.Sleep(2 * time.Second)
-	log.Printf("Worker %s: sent the email successfully, JOB: %s", job.Type, job.ID)
 }
