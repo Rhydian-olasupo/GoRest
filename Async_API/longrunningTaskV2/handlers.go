@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 )
@@ -14,9 +15,10 @@ import (
 //JobServer holds handler functions
 
 type JobServer struct {
-	Queue   amqp.Queue
-	Channel *amqp.Channel
-	Conn    *amqp.Connection
+	Queue       amqp.Queue
+	Channel     *amqp.Channel
+	Conn        *amqp.Connection
+	redisClient *redis.Client
 }
 
 func (s *JobServer) publish(jsonBody []byte) error {
