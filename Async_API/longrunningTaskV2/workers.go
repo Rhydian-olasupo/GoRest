@@ -17,9 +17,12 @@ type Workers struct {
 
 func (w *Workers) dbWork(job models.Job) {
 	result := job.ExtraData.(map[string]interface{})
+	w.redisClient.Set(job.ID.String(), "STARTED", 0)
 	log.Printf("Workers %s: extracting data....., JOB: %s", job.Type, result)
+	w.redisClient.Set(job.ID.String(), "IN PROGRESS", 0)
 	time.Sleep(2 * time.Second)
 	log.Printf("Workesrs %s: saving data to database...., JOB: %s", job.Type, job.ID)
+	w.redisClient.Set(job.ID.String(), "DONE", 0)
 }
 
 func (w *Workers) callbackWork(job models.Job) {
