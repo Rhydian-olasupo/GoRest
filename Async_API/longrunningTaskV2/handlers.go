@@ -39,7 +39,8 @@ func (s *JobServer) publish(jsonBody []byte) error {
 }
 
 func (s *JobServer) statusHandler(w http.ResponseWriter, r *http.Request) {
-	uuid := r.URL.Query().Get("uuid")
+	queryParams := r.URL.Query()
+	uuid := queryParams.Get("uuid")
 	w.Header().Set("Content -Type", "application/json")
 	jobStatus := s.redisClient.Get(uuid)
 	status := map[string]string{"uuid": uuid, "status": jobStatus.Val()}

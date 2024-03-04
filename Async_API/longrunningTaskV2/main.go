@@ -65,7 +65,7 @@ func main() {
 	router.HandleFunc("/job/database", jobServer.asyncDBHandler)
 	router.HandleFunc("/job/mail", jobServer.asyncMailHandler)
 	router.HandleFunc("/job/callback", jobServer.asyncCallbackHandler)
-	router.HandleFunc("job/status", jobServer.statusHandler)
+	router.HandleFunc("/job/status", jobServer.statusHandler)
 
 	httpServer := &http.Server{
 		Handler:      router,
