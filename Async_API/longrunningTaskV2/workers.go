@@ -6,11 +6,13 @@ import (
 	"log"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/streadway/amqp"
 )
 
 type Workers struct {
-	conn *amqp.Connection
+	conn        *amqp.Connection
+	redisClient *redis.Client
 }
 
 func (w *Workers) dbWork(job models.Job) {
@@ -39,6 +41,13 @@ func (w *Workers) run() {
 	handleError(err, "Fetching Channel Failed")
 
 	defer channel.Close()
+
+	//Create a new connection
+	w.redisClient = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
 
 	jobQueue, err := channel.QueueDeclare(
 		queueName,

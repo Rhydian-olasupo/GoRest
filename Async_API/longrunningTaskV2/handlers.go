@@ -38,6 +38,17 @@ func (s *JobServer) publish(jsonBody []byte) error {
 	return err
 }
 
+func (s *JobServer) statusHandler(w http.ResponseWriter, r *http.Request) {
+	uuid := r.URL.Query().Get("uuid")
+	w.Header().Set("Content -Type", "application/json")
+	jobStatus := s.redisClient.Get(uuid)
+	status := map[string]string{"uuid": uuid, "status": jobStatus.Val()}
+	response, err := json.Marshal(status)
+	handleError(err, "Cannot create a response for client")
+	w.Write(response)
+
+}
+
 func (s *JobServer) asyncDBHandler(w http.ResponseWriter, r *http.Request) {
 	jobID, err := uuid.NewRandom()
 	handleError(err, "Error generating job ID")

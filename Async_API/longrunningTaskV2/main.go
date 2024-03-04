@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 	"github.com/streadway/amqp"
 )
@@ -45,6 +46,12 @@ func getServer(name string) JobServer {
 func main() {
 	jobServer := getServer(queueName)
 
+	jobServer.redisClient = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
 	// Start Workers
 	go func(conn *amqp.Connection) {
 		workerProcess := Workers{
@@ -58,6 +65,7 @@ func main() {
 	router.HandleFunc("/job/database", jobServer.asyncDBHandler)
 	router.HandleFunc("/job/mail", jobServer.asyncMailHandler)
 	router.HandleFunc("/job/callback", jobServer.asyncCallbackHandler)
+	router.HandleFunc("job/status", jobServer.statusHandler)
 
 	httpServer := &http.Server{
 		Handler:      router,
