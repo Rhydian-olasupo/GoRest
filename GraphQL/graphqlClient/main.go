@@ -1,6 +1,10 @@
 package main
 
 import (
+	"context"
+	"log"
+	"os"
+
 	"github.com/machinebox/graphql"
 )
 
@@ -28,5 +32,17 @@ func main() {
 			}
 		}
 	`)
+	var GithubToken = os.Getenv("GITHUB_TOKEN")
+	req.Header.Add("Authorization", "bearer "+GithubToken)
 
+	// define a Context for the request
+
+	ctx := context.Background()
+
+	//run it and capture the response
+	var respData Response
+	if err := client.Run(ctx, req, &respData); err != nil {
+		log.Fatal(err)
+	}
+	log.Println(respData.License.Description)
 }
