@@ -185,3 +185,16 @@ require (
 	modernc.org/strutil v1.1.3 // indirect
 	modernc.org/token v1.0.1 // indirect
 )
+
+require (
+	github.com/go-acme/lego/v4 v4.4.0 // indirect
+	github.com/gobwas/httphead v0.1.0 // indirect
+	github.com/gobwas/pool v0.2.1 // indirect
+	github.com/gobwas/ws v1.2.1 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
+	github.com/kr/text v0.2.0 // indirect
+	github.com/matryer/is v1.2.0 // indirect
+	github.com/onsi/gomega v1.30.0 // indirect
+	github.com/rogpeppe/go-internal v1.11.0 // indirect
+)
