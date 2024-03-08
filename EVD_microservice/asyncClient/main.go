@@ -17,7 +17,7 @@ func ProcessEvent(ctx context.Context, event *proto.Event) error {
 
 func main() {
 	//Create a new service
-	service := micro.NewService(micro.Name("weather-alert"))
+	service := micro.NewService(micro.Name("weather_client"))
 
 	//Initialize the client and parse the command line flags
 
