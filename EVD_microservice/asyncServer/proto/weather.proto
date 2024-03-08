@@ -1,0 +1,9 @@
+synatx = "proto3";
+options go_package = "/protofiles";
+ 
+message Event {
+    string city = 1;
+    int64 temperature = 2;
+    int64 temperature = 3;
+}
+
