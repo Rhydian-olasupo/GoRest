@@ -1,0 +1,13 @@
+syntax = "proto3";
+option go_package = "/protofiles";
+ 
+message Event {
+    //city name
+    string city = 1;
+
+    //unix timestamp
+    int64 timestamp = 2;
+
+    // temperature in celsius
+    int64 temperature = 3;
+}
