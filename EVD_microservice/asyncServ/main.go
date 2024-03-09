@@ -17,6 +17,11 @@ func main() {
 		micro.Name("weather"),
 	)
 
+	/*Start the broker
+	if err := broker.Connect(); err!=nil {
+		log.Fatalf("broker connect error: %v",err)
+	}*/
+
 	p := micro.NewEvent("alerts", service.Client())
 
 	go func() {
