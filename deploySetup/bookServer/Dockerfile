@@ -1,4 +1,4 @@
-FROM mainline-alpine3.18-perl
+FROM alpine
 WORKDIR /go/bin/
 COPY app . 
 CMD [ "./app" ]
