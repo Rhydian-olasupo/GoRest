@@ -2,33 +2,31 @@
 version: '3'
 
 services:
-#App Service
-app:
-build:
-context: ./bookServer
-dockerfile: Dockerfile
-expose:
-- 8000
-restart: unless-stopped
+  restart: unless-stopped
+  # App Service
+  app:
+    build:
+      context: ./bookServer
+    dockerfile: Dockerfile
+    expose:
+      - 8000
+    networks:
+      - app-network
+  
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+
 networks:
-- app-network
-
-
-#Nginx Service
-nginx:
-image: nginx:mainline-alpine3.18-perl
-restart: unless-stopped
-ports:
-- "80:80"
-- "443:443"
-volumes:
-- ./nginx-conf:/etc/nginx/conf.d
-depends_on:
-- app
-networks:
-- app-network
-
-networks:
-app-networks:
-driver: bridge
-
+  app-networks:
+  driver: bridge
