@@ -187,6 +187,7 @@ require (
 )
 
 require (
+	github.com/garyburd/redigo v1.6.4 // indirect
 	github.com/go-acme/lego/v4 v4.4.0 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
@@ -199,4 +200,5 @@ require (
 	github.com/matryer/is v1.2.0 // indirect
 	github.com/onsi/gomega v1.30.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
+	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b // indirect
 )
