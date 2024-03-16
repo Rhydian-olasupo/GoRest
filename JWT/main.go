@@ -41,7 +41,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 				"username": username,
 				"iat":      time.Now().Unix(),
 			})
-			tokenString, err := token.SignedString(os.Getenv("session_secret"))
+			tokenString, err := token.SignedString(secretKey)
 			if err != nil {
 				w.WriteHeader(http.StatusBadGateway)
 				w.Write([]byte(err.Error()))
