@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+	store = sessions.NewCookieStore([]byte(os.Getenv("session_secret")))
 	users = map[string]string{"naren": "passme", "admin": "password"}
 )
 
