@@ -41,7 +41,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 				"username": username,
 				"iat":      time.Now().Unix(),
 			})
-			tokenString, err := token.SignedString(os.Getenv("session_secret"))
+			tokenString, err := token.SignedString(secretKey)
 			if err != nil {
 				w.WriteHeader(http.StatusBadGateway)
 				w.Write([]byte(err.Error()))
@@ -63,7 +63,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HealthcheckHandler(w http.ResponseWriter, r *http.Request) {
-	tokenString, err := request.HeaderExtractor{"access_token"}.ExtractToken(r)
+	tokenString, _ := request.HeaderExtractor{"access_token"}.ExtractToken(r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
